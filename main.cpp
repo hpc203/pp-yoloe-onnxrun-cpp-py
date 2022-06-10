@@ -119,13 +119,12 @@ void PP_YOLOE::detect(Mat& srcimg)
 	// 开始推理
 	vector<Value> ort_outputs = ort_session->Run(RunOptions{ nullptr }, input_names.data(), ort_inputs.data(), 2, output_names.data(), output_names.size());
 	const float* outs = ort_outputs[0].GetTensorMutableData<float>();
-	//const float* box_num = ort_outputs[1].GetTensorMutableData<float>();
-	const int box_num = 100;
+	const int* box_num = ort_outputs[1].GetTensorMutableData<int>();
 
 	const float ratioh = float(srcimg.rows) / this->inpHeight;
 	const float ratiow = float(srcimg.cols) / this->inpWidth;
 	vector<BoxInfo> boxs;
-	for (int i = 0; i < box_num; i++)
+	for (int i = 0; i < box_num[0]; i++)
 	{
 		if (outs[0] > -1 && outs[1] > this->confThreshold)
 		{
